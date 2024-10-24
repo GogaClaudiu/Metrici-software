@@ -1,0 +1,4 @@
+Titlu: Aplicatie interactivă pentru studiul sistemului muscular uman
+Permite utilizatorilor sa roteasca si sa mareasca modelul pentru a explora diferitele grupe musculare.
+Eticheteaza fiecare muschi și ofera o scurta descriere a functiei sale, a originii si insertiei atunci cand utilizatorul face clic pe el.
+Sectiune Quiz interactiv utilizatorii pot raspunde la intrebari despre muschii corpului uman, consolidand astfel cunostintele dobandite.
