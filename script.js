@@ -38,7 +38,8 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 document.addEventListener('DOMContentLoaded', function() {});
 
-const logOut = document.querySelector('#log-out');
+const logOut = document.querySelector('#log-out'); 
+
 logOut.addEventListener('click', function () {
   location.reload();
   localStorage.clear();
@@ -300,8 +301,7 @@ function handleSortMovements(e) {
 
 }
 
-// Event listeners
-btnLoan.addEventListener('click', handleLoan);
+
 btnClose.addEventListener('click', handleCloseAccount);
 btnSort.addEventListener('click', handleSortMovements);
 

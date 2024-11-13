@@ -24,7 +24,7 @@
           placeholder="user"
           class="login__input login__input--user"
         />
- 
+
         <input
           type="text"
           placeholder="PIN"
@@ -40,9 +40,6 @@
       <div class="balance">
         <div>
           <p class="balance__label">Current balance</p>
-          <p class="balance__date">
-            As of <span class="date">05/03/2037</span>
-          </p>
         </div>
         <p class="balance__value">0000€</p>
       </div>
@@ -63,8 +60,6 @@
         </div>
       </div>
 
-      
-
       <!-- OPERATION: TRANSFERS -->
       <div class="operation operation--transfer--color1">
         <h2>Transfer money</h2>
@@ -76,18 +71,28 @@
           <label class="form__label">Amount</label>
         </form>
       </div>
-      
 
       <!-- OPERATION: TRANSFERS -->
-      <div class="operation operation--transfer--color2 operation-transfer-to-my-accounts">
+      <div
+        class="operation operation--transfer--color2 operation-transfer-to-my-accounts"
+      >
         <h2>Transfer to my accounts</h2>
         <form class="form form--transfer">
-          <select class="form__input form__input--to my_accounts_options" id="accountSelect">
+          <select
+            class="form__input form__input--to my_accounts_options"
+            id="accountSelect"
+          >
             <option value="" disabled selected>Select an account</option>
-
           </select>
-          <input type="number" class="form__input form__input--amount form_input_my_accounts-ammount" />
-          <button class="form__btn form__btn--transfer button-transfer-my-accounts">&rarr;</button>
+          <input
+            type="number"
+            class="form__input form__input--amount form_input_my_accounts-ammount"
+          />
+          <button
+            class="form__btn form__btn--transfer button-transfer-my-accounts"
+          >
+            &rarr;
+          </button>
           <label class="form__label">Transfer to</label>
           <label class="form__label">Amount</label>
         </form>
@@ -95,47 +100,47 @@
       <script>
         // Function to fetch data from the API and populate the select
         function fetchData() {
-            const accountSelect = document.getElementById('accountSelect');
-            const currentAccountTest = JSON.parse(localStorage.getItem('currentAccount'));
-    
-            // Replace the URL with your actual API endpoint
-            const apiUrl = `http://localhost:3000/client/accounts?firstName=${currentAccountTest.firstName}&lastName=${currentAccountTest.lastName}&accountCode=${currentAccountTest.accountCode}`;
-    
-            // Fetch data from the API
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    // Clear existing options
-                    accountSelect.innerHTML = '';
-    
-                    // Populate select with account codes
-                    data.forEach(account => {
-                        const option = document.createElement('option');
-                        option.value = account.accountCode;
-                        option.text = account.accountCode;
-                        accountSelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+          const accountSelect = document.getElementById('accountSelect');
+          const currentAccountTest = JSON.parse(
+            localStorage.getItem('currentAccount')
+          );
+
+          // Replace the URL with your actual API endpoint
+          const apiUrl = `http://localhost:3000/client/accounts?firstName=${currentAccountTest.firstName}&lastName=${currentAccountTest.lastName}&accountCode=${currentAccountTest.accountCode}`;
+
+          // Fetch data from the API
+          fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+              // Clear existing options
+              accountSelect.innerHTML = '';
+
+              // Populate select with account codes
+              data.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.accountCode;
+                option.text = account.accountCode;
+                accountSelect.appendChild(option);
+              });
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
+            });
         }
-    
+
         // Add event listener to the select element
-        document.getElementById('accountSelect').addEventListener('change', fetchData);
-    
+        document
+          .getElementById('accountSelect')
+          .addEventListener('change', fetchData);
+
         // Initial fetch when the page loads
         setTimeout(fetchData, 10000);
-    </script>
-
+      </script>
 
       <!-- OPERATION: LOAN -->
       <div class="operation operation--loan">
-      
         <button id="log-out">Log Out</button>
       </div>
-
-    
     </main>
 
     <script src="script.js"></script>
