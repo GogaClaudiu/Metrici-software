@@ -7,7 +7,6 @@
 /////////////////////////////////////////////////
 // Data
 
-
 const accounts = [];
 
 /////////////////////////////////////////////////
@@ -27,8 +26,10 @@ const btnTransfer = document.querySelector('.form__btn--transfer');
 const btnLoan = document.querySelector('.form__btn--loan');
 const btnClose = document.querySelector('.form__btn--close');
 const btnSort = document.querySelector('.btn--sort');
-
-const btTransferMyAccoutns = document.querySelector('.button-transfer-my-accounts');
+const btWithdraw = document.querySelector('.form__btn--withdraw');
+const btTransferMyAccoutns = document.querySelector(
+  '.button-transfer-my-accounts'
+);
 const inputLoginUsername = document.querySelector('.login__input--user');
 const inputLoginPin = document.querySelector('.login__input--pin');
 const inputTransferTo = document.querySelector('.form__input--to');
@@ -36,9 +37,9 @@ const inputTransferAmount = document.querySelector('.form__input--amount');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
-document.addEventListener('DOMContentLoaded', function() {});
+document.addEventListener('DOMContentLoaded', function () {});
 
-const logOut = document.querySelector('#log-out'); 
+const logOut = document.querySelector('#log-out');
 
 logOut.addEventListener('click', function () {
   location.reload();
@@ -50,7 +51,6 @@ let cachedData = null;
 
 const displayMovements = async function (clientID, sort = false) {
   containerMovements.innerHTML = '';
-
   try {
     const data = await fetchMovements(clientID);
     processAndDisplayData(data, sort);
@@ -61,7 +61,10 @@ const displayMovements = async function (clientID, sort = false) {
 
 // Funcție de preluare a mișcărilor de pe server
 async function fetchMovements(clientID) {
-  const response = await fetch(`http://localhost:3000/transactions/${clientID}`);
+  console.log('fetch movment ' + clientID);
+  const response = await fetch(
+    `http://localhost:3000/transactions/${clientID}`
+  );
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }
@@ -70,15 +73,23 @@ async function fetchMovements(clientID) {
 
 // Funcție de procesare și afișare a datelor
 function processAndDisplayData(apiResponse, sort) {
-  const sortedData = sort ?
-    apiResponse.slice().sort((a, b) => parseFloat(a.transactionAmount) - parseFloat(b.transactionAmount))
+  const sortedData = sort
+    ? apiResponse
+        .slice()
+        .sort(
+          (a, b) =>
+            parseFloat(a.transactionAmount) - parseFloat(b.transactionAmount)
+        )
     : apiResponse;
 
   sortedData.forEach(function (transaction, i) {
-    const type = parseFloat(transaction.transactionAmount) > 0 ? 'deposit' : 'withdrawal';
+    const type =
+      parseFloat(transaction.transactionAmount) > 0 ? 'deposit' : 'withdrawal';
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
+        <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
         <div class="movements__value">${transaction.transactionAmount}€</div>
       </div>
     `;
@@ -87,12 +98,14 @@ function processAndDisplayData(apiResponse, sort) {
   });
 }
 // eveniment afaugat pe butonul de transfer (conturi propriu)
-btTransferMyAccoutns.addEventListener('click',  function (e) {
+btTransferMyAccoutns.addEventListener('click', function (e) {
   e.preventDefault();
   const inputToTransfer = document.querySelector('.my_accounts_options').value;
-  console.log(inputToTransfer)
-  const inputValueForAmount = document.querySelector('.form_input_my_accounts-ammount').value;
-console.log(inputValueForAmount);
+  console.log(inputToTransfer);
+  const inputValueForAmount = document.querySelector(
+    '.form_input_my_accounts-ammount'
+  ).value;
+  console.log(inputValueForAmount);
   try {
     const currentAccount = JSON.parse(localStorage.getItem('currentAccount'));
     const destinationAccountCode = inputToTransfer;
@@ -100,45 +113,102 @@ console.log(inputValueForAmount);
 
     const url = `http://localhost:3000/transfer/${currentAccount.accountCode}/${destinationAccountCode}/${amount}`;
     fetchTransfer(url)
-    .then(() => updateBalanceAfterDelay(currentAccount.accountCode))
-    .then(() => console.log('Transfer completed successfully'))
-.then(()=>inputValueForAmount.value = 0)
-    .catch(error => console.error('There was a problem with the fetch operation:', error.message));
-    
+      .then(() => {
+        updateBalanceAfterDelay(currentAccount.accountCode);
+        displayMovements(currentAccount.clientID, false);
+      })
+      .then(() => console.log('Transfer completed successfully'))
+      .then(() => (inputValueForAmount.value = 0))
+      .catch(error =>
+        console.error(
+          'There was a problem with the fetch operation:',
+          error.message
+        )
+      );
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error.message);
+    console.error(
+      'There was a problem with the fetch operation:',
+      error.message
+    );
   }
 });
-
 
 // buton pentru a se declansa evenimentul pentru a transfera banii (in orice cont strain)
-btnTransfer.addEventListener('click',  function (e) {
+btnTransfer.addEventListener('click', function (e) {
+  // Adăugăm `async` aici
   e.preventDefault();
-  const inputToTransfer = document.querySelector('.form__input.form__input--to').value;
-  const inputValueForAmount = document.querySelector('.form__input.form__input--amount').value;
+  const inputToTransfer = document.querySelector(
+    '.form__input.form__input--to'
+  ).value;
+  const inputValueForAmount = document.querySelector(
+    '.form__input.form__input--amount'
+  ).value;
 
   try {
     const currentAccount = JSON.parse(localStorage.getItem('currentAccount'));
     const destinationAccountCode = inputToTransfer;
     const amount = inputValueForAmount;
 
+    // Realizează transferul
     const url = `http://localhost:3000/transfer/${currentAccount.accountCode}/${destinationAccountCode}/${amount}`;
     fetchTransfer(url)
-    .then(() => updateBalanceAfterDelay(currentAccount.accountCode))
-    .then(() => console.log('Transfer completed successfully'))
-    .catch(error => console.error('There was a problem with the fetch operation:', error.message));
-    
+      .then(() => {
+        updateBalanceAfterDelay(currentAccount.accountCode);
+        displayMovements(currentAccount.clientID, false);
+      })
+      .then(() => console.log('Transfer completed successfully'))
+      .catch(error =>
+        console.error(
+          'There was a problem with the fetch operation:',
+          error.message
+        )
+      );
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error.message);
+    console.error(
+      'There was a problem with the fetch operation:',
+      error.message
+    );
   }
 });
 
+btWithdraw.addEventListener('click', function (e) {
+  e.preventDefault();
+  const inputValueForAmount = document.querySelector('.test-input');
+
+  try {
+    const currentAccount = JSON.parse(localStorage.getItem('currentAccount'));
+    const amount = inputValueForAmount.value;
+    const url = `http://localhost:3000/transfer/${currentAccount.accountCode}/${amount}`;
+
+    fetchTransfer(url)
+      .then(() => {
+        // Actualizează soldul fără întârziere
+        return fetchBalance(currentAccount.accountCode);
+      })
+      .then(balanceData => {
+        labelBalance.textContent = `${balanceData[0].balance}€`;
+        // Actualizează mișcările imediat după tranzacție
+        displayMovements(currentAccount.clientID, false);
+      })
+      .catch(error =>
+        console.error(
+          'There was a problem with the fetch operation:',
+          error.message
+        )
+      );
+  } catch (error) {
+    console.error(
+      'There was a problem with the fetch operation:',
+      error.message
+    );
+  }
+});
 
 // Function pentru a se rwliza transferul (se apeleaza un API )
 async function fetchTransfer(url) {
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) {
@@ -148,7 +218,7 @@ async function fetchTransfer(url) {
   return response.json();
 }
 
-// Funcție de actualizare a soldului 
+// Funcție de actualizare a soldului
 async function updateBalanceAfterDelay(accountCode) {
   // Wait for 3 seconds (3000 milliseconds)
   await new Promise(resolve => setTimeout(resolve, 3000));
@@ -194,11 +264,10 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 
-
 // Event handlers
 let currentAccount;
 let cachedDataAccount;
-// Partea de logare 
+// Partea de logare
 const fetchAccount = async (username, pin) => {
   const url = `http://localhost:3000/login?accountCode=${username}&pin=${pin}`;
   const response = await fetch(url);
@@ -206,7 +275,7 @@ const fetchAccount = async (username, pin) => {
   return response.json();
 };
 
-const fetchBalance = async (clientID) => {
+const fetchBalance = async clientID => {
   const url = `http://localhost:3000/balance/${clientID}`;
   const response = await fetch(url);
   if (!response.ok) throw new Error('Failed to fetch balance');
@@ -231,9 +300,9 @@ btnLogin.addEventListener('click', function (e) {
   localStorage.clear();
   e.preventDefault();
 
-  let accountData; 
+  let accountData;
 
-  //salvare date despre cont 
+  //salvare date despre cont
   fetchAccount(inputLoginUsername.value, inputLoginPin.value)
     .then(data => {
       accountData = data; // Setați accountData în acest moment
@@ -256,7 +325,6 @@ btnLogin.addEventListener('click', function (e) {
       console.error('Error during login:', err);
     });
 });
- 
 
 // Function to handle loan
 function handleLoan(e) {
@@ -282,7 +350,9 @@ function handleCloseAccount(e) {
     inputCloseUsername.value === currentAccount.username &&
     Number(inputClosePin.value) === currentAccount.pin
   ) {
-    const index = accounts.findIndex(acc => acc.username === currentAccount.username);
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
 
     // Delete account
     accounts.splice(index, 1);
@@ -298,15 +368,10 @@ function handleCloseAccount(e) {
 function handleSortMovements(e) {
   e.preventDefault();
   displayMovements(currentAccount.movements, !sorted);
-
 }
-
 
 btnClose.addEventListener('click', handleCloseAccount);
 btnSort.addEventListener('click', handleSortMovements);
-
-
-
 
 // 1.
 const bankDepositSum = accounts
@@ -316,21 +381,17 @@ const bankDepositSum = accounts
 
 console.log(bankDepositSum);
 
-
 const numDeposits1000 = accounts
   .flatMap(acc => acc.movements)
   .reduce((count, cur) => (cur >= 1000 ? ++count : count), 0);
 
 console.log(numDeposits1000);
 
-
-
 // 3.
 const { deposits, withdrawals } = accounts
   .flatMap(acc => acc.movements)
   .reduce(
     (sums, cur) => {
-
       sums[cur > 0 ? 'deposits' : 'withdrawals'] += cur;
       return sums;
     },
@@ -339,6 +400,136 @@ const { deposits, withdrawals } = accounts
 
 console.log(deposits, withdrawals);
 
+// Function to delete an account
+document
+  .getElementById('deleteAccountButton')
+  .addEventListener('click', function (event) {
+    event.preventDefault();
 
+    const selectedAccount = document.getElementById(
+      'deleteAccountSelect'
+    ).value;
 
+    if (!selectedAccount) {
+      alert('Please select an account to delete.');
+      return;
+    }
 
+    const apiUrl = `http://localhost:3000/accounts/${selectedAccount}`;
+
+    fetch(apiUrl, { method: 'DELETE' })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById('deleteAccountMessage').textContent =
+            'Account deleted successfully.';
+          fetchAccounts(); // Refresh the accounts list
+        } else {
+          return response.json().then(data => {
+            throw new Error(data.message || 'Failed to delete account.');
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting account:', error);
+        document.getElementById(
+          'deleteAccountMessage'
+        ).textContent = `Error: ${error.message}`;
+      });
+  });
+
+// Populate the delete account dropdown
+function populateDeleteAccountDropdown() {
+  const deleteAccountSelect = document.getElementById('deleteAccountSelect');
+  const currentAccountTest = JSON.parse(localStorage.getItem('currentAccount'));
+
+  const apiUrl = `http://localhost:3000/client/accounts?firstName=${currentAccountTest.firstName}&lastName=${currentAccountTest.lastName}&accountCode=${currentAccountTest.accountCode}`;
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      deleteAccountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+
+      data.forEach(account => {
+        const option = document.createElement('option');
+        option.value = account.accountCode;
+        option.text = account.accountCode;
+        deleteAccountSelect.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching accounts:', error);
+    });
+}
+
+// Refresh account lists for delete and balance sections
+function fetchAccounts() {
+  const accountSelect = document.getElementById('accountSelect');
+  const balanceAccountSelect = document.getElementById('balanceAccountSelect');
+  const deleteAccountSelect = document.getElementById('deleteAccountSelect');
+  const currentAccountTest = JSON.parse(localStorage.getItem('currentAccount'));
+
+  const apiUrl = `http://localhost:3000/client/accounts?firstName=${currentAccountTest.firstName}&lastName=${currentAccountTest.lastName}&accountCode=${currentAccountTest.accountCode}`;
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      // Populate Transfer and Balance dropdowns
+      accountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+      balanceAccountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+      deleteAccountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+
+      data.forEach(account => {
+        const option = document.createElement('option');
+        option.value = account.accountCode;
+        option.text = account.accountCode;
+
+        accountSelect.appendChild(option);
+        balanceAccountSelect.appendChild(option.cloneNode(true));
+        deleteAccountSelect.appendChild(option.cloneNode(true));
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching accounts:', error);
+    });
+}
+
+function fetchAccounts() {
+  const accountSelect = document.getElementById('accountSelect'); // For transfers
+  const balanceAccountSelect = document.getElementById('balanceAccountSelect'); // For balance
+  const deleteAccountSelect = document.getElementById('deleteAccountSelect'); // For deletion
+  const currentAccountTest = JSON.parse(localStorage.getItem('currentAccount'));
+
+  const apiUrl = `http://localhost:3000/client/accounts?firstName=${currentAccountTest.firstName}&lastName=${currentAccountTest.lastName}&accountCode=${currentAccountTest.accountCode}`;
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      // Clear existing options and add placeholder
+      accountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+      balanceAccountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+      deleteAccountSelect.innerHTML =
+        '<option value="" disabled selected>Select an account</option>';
+
+      // Populate dropdowns
+      data.forEach(account => {
+        const option = document.createElement('option');
+        option.value = account.accountCode;
+        option.text = account.accountCode;
+
+        accountSelect.appendChild(option);
+        balanceAccountSelect.appendChild(option.cloneNode(true));
+        deleteAccountSelect.appendChild(option.cloneNode(true)); // Use cloneNode for reusability
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching accounts:', error);
+    });
+}
+const currentAccountTest = JSON.parse(localStorage.getItem('currentAccount'));
+console.log(currentAccountTest); // Check if this outputs the correct object

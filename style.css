@@ -207,10 +207,10 @@ nav {
 }
 
 .operation--transfer--color1 {
-  background-color: #0077b6;
+  background-color: #f8e911;
 }
 .operation--transfer--color2 {
-  background-color: #00b4d8;
+  background-color: #30a2c5;
 }
 .operation--transfer--color3 {
   background-color: #57b418;
@@ -303,10 +303,150 @@ h2 {
   cursor: pointer;
   border: none;
   color: white;
-  padding: 7px 16px;
+  padding: 15px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  width: 50%;
+  width: 100%;
+  max-width: 200px;
+  max-height: 100px;
+  margin-top: 50px;
+}
+
+/* General styling for the operation display container */
+.operation--display {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  min-height: 200px;
+  background-color: #c5e0e9;
+}
+
+/* Styling the heading */
+.operation--display h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Styling the form */
+.form--display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Styling the dropdown */
+.form__input--to {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+}
+
+/* Styling the button */
+.form__btn--display {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.form__btn--display:hover {
+  background-color: #45a049;
+}
+
+.form__btn--display:active {
+  background-color: #45a049;
+  color: white;
+}
+
+.form__btn--display:focus {
+  background-color: #30b637;
+  color: white;
+}
+/* Styling the balance display */
+.form__balance {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #555;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+/* Adding some responsiveness */
+@media (max-width: 480px) {
+  .operation--display {
+    padding: 15px;
+  }
+
+  .form__input--to,
+  .form__btn--display {
+    width: 100%;
+  }
+}
+
+.operation--delete {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background-color: #c5e0e9;
+}
+
+.form__btn--delete {
+  background-color: #e53935;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form__btn--delete:hover {
+  background-color: #d32f2f;
+}
+
+.form__message {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #555;
+  font-weight: bold;
+  text-align: center;
 }

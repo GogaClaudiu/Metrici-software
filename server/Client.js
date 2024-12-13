@@ -59,5 +59,15 @@ class Client {
         const updateValues = [newFirstName, newLastName, newPin, this.accountCode];
         await Database.query(updateSql, updateValues);
     }
+
+
+    async deleteAccount(){
+        const deleteTransactions = 'DELETE FROM transactions WHERE clientID = (SELECT clientID FROM Clients WHERE accountCode = ?)';
+
+        const deleteSQLAccount = 'DELETE FROM Clients WHERE accountCode = ?';
+        await Database.query(deleteTransactions, [this.accountCode]); 
+        await Database.query(deleteSQLAccount, [this.accountCode]); 
+
+    }
 }
 module.exports = Client;

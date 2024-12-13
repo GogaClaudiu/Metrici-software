@@ -63,7 +63,7 @@ app.get('/client/accounts',async(req,res)=>{
     const client = new Client(accountCode,' ');
     try{
         const dataAccounts = await client.getAccounts(firstName,lastName,accountCode);
-        console.log(JSON.stringify(dataAccounts));
+        console.log(JSON.stringify(dataAccounts)+'testtttttt');
         res.json(dataAccounts);
     }catch(err){
         console.error(err);
@@ -71,6 +71,19 @@ app.get('/client/accounts',async(req,res)=>{
     }
     
 })
+app.delete('/client/delete/account/:accountCode', async (req, res) => {
+    const { accountCode } = req.params;
+    const client = new Client(accountCode, ' '); // Initialize Client with accountCode
+    console.log(accountCode + " request");
+
+    try {
+        await client.deleteAccount(); // Await the async function
+        res.json({ message: "Deletion completed successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to delete account' });
+    }
+});
 async function handleGetTransactions(req, res) {
     const transaction = new Transaction(req.params.clientID);
 
@@ -247,3 +260,4 @@ async function getTransactionsGreaterThanAmountFunction(infoTransaction,amount,r
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+

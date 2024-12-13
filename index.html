@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="style.css" />
     <title>Bankist</title>
+    <style></style>
   </head>
   <body>
     <!-- TOP NAVIGATION -->
@@ -40,6 +41,7 @@
       <div class="balance">
         <div>
           <p class="balance__label">Current balance</p>
+          <p class="balance__date"></p>
         </div>
         <p class="balance__value">0000€</p>
       </div>
@@ -72,6 +74,28 @@
         </form>
       </div>
 
+      <!-- OPERATION: WITHDRAW -->
+      <div class="operation operation--withdraw operation--transfer--color3">
+        <h2>Withdraw money</h2>
+        <form class="form form--withdraw">
+          <input
+            type="text"
+            class="form__input form__input--to"
+            value="Your Account"
+            readonly
+          />
+
+          <input
+            type="number"
+            class="form__input form__input--amount_withdraw test-input"
+          />
+          <button class="form__btn form__btn--withdraw">&rarr;</button>
+
+          <label class="form__label">Withdraw from</label>
+          <label class="form__label">Amount</label>
+        </form>
+      </div>
+
       <!-- OPERATION: TRANSFERS -->
       <div
         class="operation operation--transfer--color2 operation-transfer-to-my-accounts"
@@ -97,44 +121,145 @@
           <label class="form__label">Amount</label>
         </form>
       </div>
+      <div class="operation operation--display">
+        <h2>View Account Balance</h2>
+        <form class="form form--display">
+          <select class="form__input form__input--to" id="balanceAccountSelect">
+            <option value="" disabled selected>Select an account</option>
+          </select>
+          <button class="form__btn form__btn--display" id="checkBalanceButton">
+            Check Balance
+          </button>
+        </form>
+        <p class="form__balance" id="accountBalanceDisplay">Balance: ---</p>
+      </div>
+      <div class="operation operation--delete">
+        <h2>Manage Accounts</h2>
+        <form class="form form--delete">
+          <select class="form__input form__input--to" id="deleteAccountSelect">
+            <option value="" disabled selected>Select an account</option>
+          </select>
+
+          <button class="form__btn form__btn--delete" id="deleteAccountButton">
+            Delete Account
+          </button>
+        </form>
+        <p class="form__message" id="deleteAccountMessage"></p>
+      </div>
       <script>
-        // Function to fetch data from the API and populate the select
-        function fetchData() {
+        // Function to fetch accounts and populate select elements
+        function fetchAccounts() {
           const accountSelect = document.getElementById('accountSelect');
+          const balanceAccountSelect = document.getElementById(
+            'balanceAccountSelect'
+          );
           const currentAccountTest = JSON.parse(
             localStorage.getItem('currentAccount')
           );
+          const selectedAccountDekete = document.getElementById(
+            'deleteAccountSelect'
+          );
 
-          // Replace the URL with your actual API endpoint
           const apiUrl = `http://localhost:3000/client/accounts?firstName=${currentAccountTest.firstName}&lastName=${currentAccountTest.lastName}&accountCode=${currentAccountTest.accountCode}`;
 
-          // Fetch data from the API
           fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
-              // Clear existing options
-              accountSelect.innerHTML = '';
-
-              // Populate select with account codes
+              accountSelect.innerHTML =
+                '<option value="" disabled selected>Select an account</option>';
+              balanceAccountSelect.innerHTML =
+                '<option value="" disabled selected>Select an account</option>';
+              selectedAccountDekete.innerHTML =
+                '<option value="" disabled selected>Select an account</option>';
               data.forEach(account => {
                 const option = document.createElement('option');
                 option.value = account.accountCode;
                 option.text = account.accountCode;
                 accountSelect.appendChild(option);
+                balanceAccountSelect.appendChild(option.cloneNode(true));
+                selectedAccountDekete.appendChild(option.cloneNode(true));
               });
             })
             .catch(error => {
-              console.error('Error fetching data:', error);
+              console.error('Error fetching accounts:', error);
             });
         }
 
-        // Add event listener to the select element
+        // Function to display account balance
         document
-          .getElementById('accountSelect')
-          .addEventListener('change', fetchData);
+          .getElementById('checkBalanceButton')
+          .addEventListener('click', function (event) {
+            event.preventDefault();
 
+            const selectedAccount = document.getElementById(
+              'balanceAccountSelect'
+            ).value;
+            const currentAccountTest = JSON.parse(
+              localStorage.getItem('currentAccount')
+            );
+
+            if (!selectedAccount) {
+              alert('Please select an account');
+              return;
+            }
+
+            const apiUrl = `http://localhost:3000/balance/${selectedAccount}`;
+
+            fetch(apiUrl)
+              .then(response => response.json())
+              .then(data => {
+                console.log(data[0].balance);
+                const balanceDisplay = document.getElementById(
+                  'accountBalanceDisplay'
+                );
+                balanceDisplay.textContent = `Balance: ${data[0].balance}€`;
+              })
+              .catch(error => {
+                console.error('Error fetching balance:', error);
+              });
+          });
+
+        document
+          .getElementById('deleteAccountButton')
+          .addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const selectedAccount = document.getElementById(
+              'deleteAccountSelect'
+            ).value;
+
+            if (!selectedAccount) {
+              alert('Please select an account');
+              return;
+            }
+
+            const apiUrl = `http://localhost:3000/client/delete/account/${selectedAccount}`;
+            console.log(apiUrl);
+
+            fetch(apiUrl, {
+              method: 'DELETE', // Set the HTTP method to DELETE
+              headers: {
+                'Content-Type': 'application/json', // Optional: if sending JSON data
+              },
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .then(data => {
+                console.log('Account deleted successfully:', data);
+                alert('Account deleted successfully!');
+                fetchAccounts();
+              })
+              .catch(error => {
+                console.error('Error deleting account:', error);
+                alert('Failed to delete account. Please try again.');
+              });
+          });
         // Initial fetch when the page loads
-        setTimeout(fetchData, 10000);
+        setTimeout(fetchAccounts, 10000);
       </script>
 
       <!-- OPERATION: LOAN -->
