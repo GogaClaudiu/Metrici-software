@@ -316,7 +316,7 @@ h2 {
 
 /* General styling for the operation display container */
 .operation--display {
-  background-color: #f9f9f9;
+  background-color: #c5e0e9;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
@@ -331,7 +331,6 @@ h2 {
   align-items: center;
   gap: 15px;
   min-height: 200px;
-  background-color: #c5e0e9;
 }
 
 /* Styling the heading */
@@ -410,7 +409,7 @@ h2 {
 }
 
 .operation--delete {
-  background-color: #f9f9f9;
+  background-color: #c5e0e9;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
@@ -423,9 +422,7 @@ h2 {
   display: flex;
   align-items: center;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
-  background-color: #c5e0e9;
 }
 
 .form__btn--delete {
